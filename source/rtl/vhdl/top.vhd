@@ -168,11 +168,11 @@ begin
   graphics_lenght <= conv_std_logic_vector(MEM_SIZE*8*8, GRAPH_MEM_ADDR_WIDTH);
   
   -- removed to inputs pin
-  direct_mode <= '1';
-  display_mode     <= "10";  -- 01 - text mode, 10 - graphics mode, 11 - text & graphics
+  direct_mode <= '0';
+  display_mode     <= "01";  -- 01 - text mode, 10 - graphics mode, 11 - text & graphics
   
   font_size        <= x"1";
-  show_frame       <= '1';
+  show_frame       <= '0';
   foreground_color <= x"FFFFFF";
   background_color <= x"000000";
   frame_color      <= x"FF0000";
@@ -255,6 +255,44 @@ begin
   --char_address
   --char_value
   --char_we
+	
+	process(clk_i, reset_n_i) begin
+		if(rst_n_i = '0') then
+			char_address <= (others => '0');
+		elsif(rising_edge(clk_i)) then
+			if(char_we = '1') then
+				if(char_address = "01001011000000") then	--4800
+					char_address <= (others => '0');
+				else
+					char_address <= char_address + 1;
+				end if;
+			end if;
+		end if;
+	end process;
+	
+	--process(char_address) begin
+		char_value <= "001001" when char_address = 0 else
+						  "010011" when char_address = 1 else
+						  "001001" when char_address = 2 else
+						  "000100" when char_address = 3 else
+						  "001111" when char_address = 4 else
+						  "010010" when char_address = 5 else
+						  "000001" when char_address = 6 else
+						  "100000" when char_address = 7 else
+						  "001001" when char_address = 8 else
+						  "010011" when char_address = 9 else
+						  "000001" when char_address = 10 else
+						  "001001" when char_address = 11 else
+						  "001100" when char_adress = 12 else
+						  "001111" when char_address = 13 else
+						  "010110" when char_adress = 14 else
+						  "001001" when char_address = 15 else
+						  "000011" when char_adress = 16 else
+						  "100000";					  
+	--end process;
+					
+	--brojac koji boji od nula do duzine stringa; select kada je oadredsa nula upisemo prvo solovo, jedan
+	--char_addr do 4800
   
   -- koristeci signale realizovati logiku koja pise po GRAPH_MEM
   --pixel_address
