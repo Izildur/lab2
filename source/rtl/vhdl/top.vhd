@@ -250,16 +250,44 @@ begin
   --dir_red
   --dir_green
   --dir_blue
+  
+  dir_red <= "11111111" when dir_pixel_column >= 0 and dir_pixel_column <= H_RES/8 else
+				 "11111111" when dir_pixel_column > H_RES/8 and dir_pixel_column <= H_RES/4 else
+				 "00000000" when dir_pixel_column > H_RES/4 and dir_pixel_column <= H_RES/8*3  else
+				 "00000000" when dir_pixel_column > H_RES/8*3 and dir_pixel_column <= H_RES/2  else
+				 "11111111" when dir_pixel_column > H_RES/2 and dir_pixel_column <= H_RES/8*5  else
+				 "11111111" when dir_pixel_column > H_RES/8*5 and dir_pixel_column <= H_RES/8*6  else
+				 "00000000" when dir_pixel_column > H_RES/8*6 and dir_pixel_column <= H_RES/8*7  else
+				 "00000000";
+  
+  dir_green <= "11111111" when dir_pixel_column >= 0 and dir_pixel_column <= H_RES/8  else
+					"11111111" when dir_pixel_column > H_RES/8 and dir_pixel_column <= H_RES/4  else 
+					"11111111" when dir_pixel_column > H_RES/4 and dir_pixel_column <= H_RES/8*3  else
+					"11111111" when dir_pixel_column > H_RES/8*3 and dir_pixel_column <= H_RES/2  else
+					"00000000" when dir_pixel_column > H_RES/2 and dir_pixel_column <= H_RES/8*5  else
+					"00000000" when dir_pixel_column > H_RES/8*5 and dir_pixel_column <= H_RES/8*6  else
+					"00000000" when dir_pixel_column > H_RES/8*6 and dir_pixel_column <= H_RES/8*7  else
+					"00000000";
+  
+  dir_blue <= "11111111" when dir_pixel_column >= 0 and dir_pixel_column <= H_RES/8  else
+				  "00000000" when dir_pixel_column > H_RES/8 and dir_pixel_column <= H_RES/4  else
+				  "11111111" when dir_pixel_column > H_RES/4 and dir_pixel_column <= H_RES/8*3  else
+				  "00000000" when dir_pixel_column > H_RES/8*3 and dir_pixel_column <= H_RES/2  else
+				  "11111111" when dir_pixel_column > H_RES/2 and dir_pixel_column <= H_RES/8*5  else
+				  "00000000" when dir_pixel_column > H_RES/8*5 and dir_pixel_column <= H_RES/8*6  else
+				  "11111111" when dir_pixel_column > H_RES/8*6 and dir_pixel_column <= H_RES/8*7  else
+				  "00000000";
  
   -- koristeci signale realizovati logiku koja pise po TXT_MEM
   --char_address
   --char_value
   --char_we
 	
-	process(clk_i, reset_n_i) begin
-		if(rst_n_i = '0') then
+	char_we <= '1';
+	process(pix_clock_s, reset_n_i) begin
+		if(reset_n_i = '0') then
 			char_address <= (others => '0');
-		elsif(rising_edge(clk_i)) then
+		elsif(rising_edge(pix_clock_s)) then
 			if(char_we = '1') then
 				if(char_address = "01001011000000") then	--4800
 					char_address <= (others => '0');
@@ -270,26 +298,27 @@ begin
 		end if;
 	end process;
 	
-	--process(char_address) begin
-		char_value <= "001001" when char_address = 0 else
-						  "010011" when char_address = 1 else
-						  "001001" when char_address = 2 else
-						  "000100" when char_address = 3 else
-						  "001111" when char_address = 4 else
-						  "010010" when char_address = 5 else
-						  "000001" when char_address = 6 else
-						  "100000" when char_address = 7 else
-						  "001001" when char_address = 8 else
-						  "010011" when char_address = 9 else
-						  "000001" when char_address = 10 else
-						  "001001" when char_address = 11 else
-						  "001100" when char_adress = 12 else
-						  "001111" when char_address = 13 else
-						  "010110" when char_adress = 14 else
-						  "001001" when char_address = 15 else
-						  "000011" when char_adress = 16 else
+	---process(char_address) begin
+	--if char_we = '1' than
+		char_value <= "001001" when char_address = 0 and char_we = '1' else
+						  "010011" when char_address = 1 and char_we = '1' else
+						  "001001" when char_address = 2 and char_we = '1' else
+						  "000100" when char_address = 3 and char_we = '1' else
+						  "001111" when char_address = 4 and char_we = '1' else
+						  "010010" when char_address = 5 and char_we = '1' else
+						  "000001" when char_address = 6 and char_we = '1' else
+						  "100000" when char_address = 7 and char_we = '1' else
+						  "001001" when char_address = 8 and char_we = '1' else
+						  "010011" when char_address = 9 and char_we = '1' else
+						  "000001" when char_address = 10 and char_we = '1' else
+						  "001001" when char_address = 11 and char_we = '1' else
+						  "001100" when char_address = 12 and char_we = '1' else
+						  "001111" when char_address = 13 and char_we = '1' else
+						  "010110" when char_address = 14 and char_we = '1' else
+						  "001001" when char_address = 15 and char_we = '1' else
+						  "000011" when char_address = 16 and char_we = '1' else
 						  "100000";					  
-	--end process;
+	---end process;
 					
 	--brojac koji boji od nula do duzine stringa; select kada je oadredsa nula upisemo prvo solovo, jedan
 	--char_addr do 4800
